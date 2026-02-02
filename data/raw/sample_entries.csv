@@ -1,0 +1,7 @@
+text,date,mood_label
+"Today was absolutely amazing! I woke up feeling energized and motivated.",2024-01-15,positive
+"Feeling a bit lazy today. Didn't accomplish much.",2024-01-16,negative
+"Pretty normal day. Nothing particularly exciting.",2024-01-17,neutral
+"I'm so excited about my new project! Can't wait to dive in.",2024-01-18,positive
+"Everything feels overwhelming today. I don't have the energy.",2024-01-19,negative
+"Great progress today! Feeling proud of what I've accomplished.",2024-01-20,positive
