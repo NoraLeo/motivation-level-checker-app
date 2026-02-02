@@ -48,7 +48,7 @@ def test_analyze_positive_entry():
 def test_analyze_negative_entry():
     """Test analysis of negative journal entry."""
     payload = {
-        "text": "Feeling really unmotivated and lazy. Can't get anything done."
+        "text": "I feel terrible and completely unmotivated. Everything is hopeless and I want to give up."
     }
     
     response = client.post("/analyze", json=payload)
