@@ -42,9 +42,6 @@ prediction_errors_total = Counter(
 class MetricsMiddleware:
     """Middleware for tracking API metrics."""
     
-    def __init__(self):
-        pass
-    
     def track_request(self, endpoint: str, method: str, status: int, duration: float):
         """Track an API request."""
         api_requests_total.labels(endpoint=endpoint, method=method, status=status).inc()

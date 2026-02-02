@@ -83,7 +83,7 @@ class JournalDataLoader:
                 if date_column in df.columns:
                     try:
                         date = pd.to_datetime(row[date_column])
-                    except:
+                    except (ValueError, TypeError):
                         pass
                 
                 entry = JournalEntry(

@@ -12,8 +12,6 @@ setup(
         "numpy>=1.24.0",
         "pandas>=2.0.0",
         "scikit-learn>=1.3.0",
-        "transformers>=4.30.0",
-        "torch>=2.0.0",
         "nltk>=3.8.0",
         "textblob>=0.17.0",
         "fastapi>=0.100.0",

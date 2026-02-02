@@ -36,9 +36,6 @@ class MoodAnalyzer:
         'quit', 'difficult', 'struggle', 'frustrated', 'hopeless'
     ]
     
-    def __init__(self):
-        pass
-    
     def analyze_sentiment(self, text: str) -> Tuple[float, float]:
         """
         Analyze sentiment of text.
