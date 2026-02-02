@@ -1,0 +1,39 @@
+# Application configuration
+app:
+  name: "Motivation Level Checker"
+  version: "0.1.0"
+  environment: "development"
+
+# API configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  reload: true
+
+# Model configuration
+model:
+  type: "sentiment_analysis"
+  version: "v1"
+  model_path: "data/models/mood_classifier.pkl"
+  min_confidence: 0.5
+
+# Data configuration
+data:
+  raw_path: "data/raw"
+  processed_path: "data/processed"
+  max_entry_length: 5000
+
+# MLflow configuration
+mlflow:
+  tracking_uri: "mlruns"
+  experiment_name: "motivation-level-checker"
+  
+# Monitoring
+monitoring:
+  enabled: true
+  metrics_port: 9090
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
