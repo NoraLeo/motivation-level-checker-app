@@ -8,6 +8,9 @@ on:
         required: true
         default: 'data/raw/journal_entries.csv'
 
+permissions:
+  contents: read
+
 jobs:
   train:
     runs-on: ubuntu-latest
