@@ -6,6 +6,11 @@ import logging
 from typing import Dict, List, Tuple
 from textblob import TextBlob
 import numpy as np
+from dotenv import load_dotenv
+import os
+
+#importing a HuggingFace Transformer model for sentiment analysis
+from transformers import pipeline, AutoTokenizer, AutoModel
 
 logger = logging.getLogger(__name__)
 
@@ -21,20 +26,46 @@ class MoodAnalyzer:
         "positive": (0.2, 0.6),
         "very_positive": (0.6, 1.0)
     }
+
+    def __init__(self):
+        """Initialize the MoodAnalyzer with a HuggingFace pipeline."""
+        # Load environment variables from the specified .env file
+        load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../../.env"))
+
+        # Retrieve the token from the .env file
+        token = os.getenv("HF_TOKEN")
+
+        # Log the token loading for debugging
+        logger.info(f"Loaded HuggingFace token: {token}")
+
+        # Initialize the HuggingFace pipeline with the correct model identifier
+        self.transformer_pipeline = pipeline(
+            "text-classification",
+            model="bhadresh-savani/distilbert-base-uncased-emotion",
+            return_all_scores=True,
+            use_auth_token=token
+        )
+
+        #for finding similarity between predifined mood categories and the transformer labels
+        self.tokenizer = AutoTokenizer.from_pretrained("bhadresh-savani/distilbert-base-uncased-emotion")
+        self.model = AutoModel.from_pretrained("bhadresh-savani/distilbert-base-uncased-emotion")
+
+    def get_embedding(self, text: str) -> np.ndarray:
+        """Get embedding for a given text using the transformer model."""
+        inputs = self.tokenizer(text, return_tensors="pt")
+        outputs = self.model(**inputs)
+        # Use the mean of the last hidden state as the embedding
+        embedding = outputs.last_hidden_state.mean(dim=1).detach().numpy()
+        return embedding.flatten()
     
-    # Keywords indicating high motivation
-    HIGH_MOTIVATION_KEYWORDS = [
-        'accomplish', 'achieve', 'goal', 'productive', 'motivated',
-        'excited', 'determined', 'progress', 'success', 'complete',
-        'finish', 'energy', 'focused', 'driven', 'inspired'
-    ]
-    
-    # Keywords indicating low motivation
-    LOW_MOTIVATION_KEYWORDS = [
-        'lazy', 'tired', 'unmotivated', 'procrastinate', 'stuck',
-        'overwhelmed', 'exhausted', 'burnout', 'pointless', 'give up',
-        'quit', 'difficult', 'struggle', 'frustrated', 'hopeless'
-    ]
+    def similarity(self, emb1: np.ndarray, emb2: np.ndarray) -> float:
+        """Calculate cosine similarity between two embeddings."""
+        dot_product = np.dot(emb1, emb2)
+        norm_a = np.linalg.norm(emb1)
+        norm_b = np.linalg.norm(emb2)
+        if norm_a == 0 or norm_b == 0:
+            return 0.0
+        return dot_product / (norm_a * norm_b)
     
     def analyze_sentiment(self, text: str) -> Tuple[float, float]:
         """
@@ -59,26 +90,29 @@ class MoodAnalyzer:
         """
         Calculate motivation score (0-100).
         
-        Combines sentiment polarity with keyword analysis.
+        Combines sentiment polarity with the highest score from the HuggingFace transformer.
         """
-        text_lower = text.lower()
-        
-        # Count motivation keywords
-        high_motivation_count = sum(1 for keyword in self.HIGH_MOTIVATION_KEYWORDS if keyword in text_lower)
-        low_motivation_count = sum(1 for keyword in self.LOW_MOTIVATION_KEYWORDS if keyword in text_lower)
-        
-        # Keyword-based score (-1 to 1)
-        keyword_score = 0
-        if high_motivation_count + low_motivation_count > 0:
-            keyword_score = (high_motivation_count - low_motivation_count) / (high_motivation_count + low_motivation_count)
-        
-        # Combine polarity and keyword score (weighted average)
-        # 60% sentiment, 40% keywords
-        combined_score = 0.6 * polarity + 0.4 * keyword_score
-        
+        # Get transformer scores 
+        transformer_scores= self.transformer_pipeline(text)
+
+        # Combine polarity and transformer score (weighted average)
+        # 50% sentiment, 50% transformer score
+        #Calculate the transformer score based on the similarity to motivation-related labels (
+        # how similar is the label value to any of the mood categories defined above)
+        tf_score = transformer_scores[0].get('score')
+        tf_label = transformer_scores[0].get('label')
+        highest_score = tf_score  # Default to the raw score
+        label_embedding = self.get_embedding(tf_label)
+        for mood in self.MOOD_CATEGORIES.keys():
+            mood_embedding = self.get_embedding(mood)
+            sim = self.similarity(label_embedding, mood_embedding)
+            if sim > highest_score:
+                highest_score = sim
+        combined_score = 0.5 * polarity + (0.5 * highest_score * tf_score)
+
         # Convert to 0-100 scale
         motivation_score = (combined_score + 1) * 50
-        
+
         return np.clip(motivation_score, 0, 100)
     
     def analyze(self, text: str) -> Dict:
@@ -113,6 +147,7 @@ class MoodAnalyzer:
             motivation_level = self.calculate_motivation_score(text, polarity)
             
             # Determine motivation category
+            # TODO: Refine thresholds based on empirical data
             if motivation_level >= 70:
                 motivation_category = "high"
             elif motivation_level >= 40:
@@ -133,7 +168,7 @@ class MoodAnalyzer:
             }
         
         except Exception as e:
-            logger.error(f"Error analyzing text: {e}")
+            logger.error("Error analyzing text", exc_info=True)
             return {
                 "error": str(e),
                 "mood": "neutral",
