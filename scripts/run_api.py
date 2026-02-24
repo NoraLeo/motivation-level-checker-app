@@ -3,7 +3,7 @@ Script to run the API server.
 """
 
 import uvicorn
-from src.api.main import app
+from motivation_checker.api.main import app
 
 
 if __name__ == "__main__":

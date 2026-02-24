@@ -1,7 +1,7 @@
 """Unit tests for data preprocessing."""
 
 import pytest
-from src.data.preprocessing import TextPreprocessor
+from motivation_checker.data.preprocessing import TextPreprocessor
 
 
 def test_text_preprocessor_initialization(text_preprocessor):

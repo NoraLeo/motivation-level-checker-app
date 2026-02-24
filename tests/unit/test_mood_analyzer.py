@@ -1,7 +1,7 @@
 """Unit tests for MoodAnalyzer."""
 
 import pytest
-from src.models.mood_analyzer import MoodAnalyzer
+from motivation_checker.models.mood_analyzer import MoodAnalyzer
 
 
 def test_mood_analyzer_initialization(mood_analyzer):

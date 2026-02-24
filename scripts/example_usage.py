@@ -2,9 +2,9 @@
 Example script demonstrating how to use the motivation level checker.
 """
 
-from src.models.mood_analyzer import MoodAnalyzer
-from src.data.preprocessing import TextPreprocessor
-from src.data.ingestion import JournalEntry, JournalDataLoader
+from motivation_checker.models.mood_analyzer import MoodAnalyzer
+from motivation_checker.data.preprocessing import TextPreprocessor
+from motivation_checker.data.ingestion import JournalEntry, JournalDataLoader
 
 
 def main():

@@ -141,7 +141,7 @@ curl -X POST "http://localhost:8000/analyze" \
 ### Using the Python API
 
 ```python
-from src.models.mood_analyzer import MoodAnalyzer
+from motivation_checker.models.mood_analyzer import MoodAnalyzer
 
 analyzer = MoodAnalyzer()
 result = analyzer.analyze("I'm feeling great and motivated today!")

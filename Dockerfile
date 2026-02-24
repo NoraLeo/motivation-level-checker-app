@@ -1,29 +1,22 @@
-FROM python:3.9-slim
-
+FROM python:3.10-slim as builder
 WORKDIR /app
+# Install Poetry
+RUN pip install poetry
+# Copy the dependencies in the TOML file and lock it
+COPY pyproject.toml poetry.lock ./
+# Export locked dependencies to a standard format
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
-COPY requirements.txt .
-
-# Install Python dependencies
+FROM python:3.10-slim
+WORKDIR /app
+COPY --from=builder /app/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Download NLTK data
-RUN python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
-
-# Copy application code
-COPY . .
-
-# Install the package
-RUN pip install -e .
-
-# Expose API port
-EXPOSE 8000
-
-# Run the API server
-CMD ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+COPY src/ ./src
+# Install your local package in editable mode if needed, or just set PYTHONPATH
+ENV PYTHONPATH=/app/src
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8000/health || exit 1
+CMD ["uvicorn", "motivation_checker.api.main:app", "--host", "0.0.0.0"]

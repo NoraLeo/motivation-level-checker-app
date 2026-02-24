@@ -8,8 +8,8 @@ from typing import Optional
 from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-from src.models.mood_analyzer import MoodAnalyzer
-from src.data.preprocessing import TextPreprocessor
+from motivation_checker.models.mood_analyzer import MoodAnalyzer
+from motivation_checker.data.preprocessing import TextPreprocessor
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -21,6 +21,7 @@ app = FastAPI(
     description="Analyze mood and motivation levels from journal entries",
     version="0.1.0"
 )
+
 
 # Initialize components
 mood_analyzer = MoodAnalyzer()

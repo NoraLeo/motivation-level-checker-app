@@ -2,7 +2,7 @@
 
 import pytest
 from fastapi.testclient import TestClient
-from src.api.main import app
+from motivation_checker.api.main import app
 
 client = TestClient(app)
 

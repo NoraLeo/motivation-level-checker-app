@@ -6,7 +6,7 @@ import argparse
 import logging
 from pathlib import Path
 import pandas as pd
-from src.models.train import MoodModelTrainer
+from motivation_checker.models.train import MoodModelTrainer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

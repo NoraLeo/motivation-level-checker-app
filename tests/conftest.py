@@ -1,8 +1,8 @@
 """Test configuration and fixtures."""
 
 import pytest
-from src.models.mood_analyzer import MoodAnalyzer
-from src.data.preprocessing import TextPreprocessor
+from motivation_checker.models.mood_analyzer import MoodAnalyzer
+from motivation_checker.data.preprocessing import TextPreprocessor
 
 
 @pytest.fixture
