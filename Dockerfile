@@ -2,6 +2,7 @@ FROM python:3.10-slim as builder
 WORKDIR /app
 # Install Poetry
 RUN pip install poetry
+RUN poetry self add poetry-plugin-export
 # Copy the dependencies in the TOML file and lock it
 COPY pyproject.toml poetry.lock ./
 # Export locked dependencies to a standard format
