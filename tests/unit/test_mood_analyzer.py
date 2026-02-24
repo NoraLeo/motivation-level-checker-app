@@ -12,7 +12,7 @@ def test_mood_analyzer_initialization(mood_analyzer):
 
 def test_analyze_positive_text(mood_analyzer):
     """Test analysis of positive text."""
-    text = "I'm so excited and motivated! Today I achieved all my goals."
+    text = "I\'m so excited and motivated! Today I achieved all my goals."
     result = mood_analyzer.analyze(text)
     
     assert result["mood"] in ["positive", "very_positive"]
