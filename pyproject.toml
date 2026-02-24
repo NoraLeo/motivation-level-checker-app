@@ -19,11 +19,19 @@ mlflow = ">=2.5.0"
 python-dotenv = ">=1.0.0"
 pyyaml = ">=6.0"
 transformers = "^5.2.0"
+torch = {version = "^2.10.0", source = "pytorch-cpu"}
+torchvision = {version = "^0.25.0", source = "pytorch-cpu"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.4.0"
 pytest-cov = ">=4.1.0"
 httpx = ">=0.24.0"
+
+
+[[tool.poetry.source]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "explicit"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
